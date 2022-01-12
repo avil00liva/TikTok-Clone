@@ -99,12 +99,11 @@ function App() {
   }, [db])
 
   return (
-    <div className="">
-      <div className="bg-gray-900 dark:text-white dark:bg-gray-900 container min-h-screen relative">
-        <div className='w-full min-h-screen snap-y snap-mandatory block overflow-hidden'>
+      <div className="w-full min-h-screen">
+        <div className='w-full min-h-screen block bg-gray-900'>
             {posts.map((tiktok)=>{
               return (
-                <div className='snap-center overflow-hidden' key={tiktok.id}>
+                <div className='snap-start overflow-hidden' key={tiktok.id}>
                   <VideoPlayer {...tiktok} />
                 </div>
               )
@@ -113,7 +112,6 @@ function App() {
         <AddVideo addTik={addTik} />
         <NavbarBottom  addTik={addTik} newTiktok={newTiktok}  />
       </div>
-    </div>
   )
 }
 

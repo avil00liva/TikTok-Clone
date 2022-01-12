@@ -59,6 +59,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
 }
 
 code {
@@ -71,14 +79,14 @@ code {
   height: 5px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3b3b3b;
+  background: #123;
   border-radius: 30px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #b3afb3;
 }
 ::-webkit-scrollbar-track {
-  background: #f0f0f0;
+  background: #3b3b3b;
   border-radius: 0px;
   box-shadow: inset 0px 0px 0px 0px #f0f0f0;
 }
