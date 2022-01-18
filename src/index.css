@@ -23,10 +23,10 @@
   }
 
   .addTextTrue {
-    @apply transition-colors duration-500 z-10 w-full min-h-[50px] text-gray-900 border-t border-blue-400 p-1 fixed left-0 bottom-0 flex items-center justify-between px-2
+    @apply transition-colors duration-500 z-10 w-full min-h-[50px] text-gray-900 border-t border-blue-400 p-1 fixed left-0 bottom-0 flex items-center justify-between px-2 quini:hidden
   }
   .addTextFalse {
-    @apply transition-colors duration-500 z-10 w-full min-h-[50px] text-gray-200 border-t border-blue-400 p-1 fixed left-0 bottom-0 flex items-center justify-between px-2
+    @apply transition-colors duration-500 z-10 w-full min-h-[50px] text-gray-200 border-t border-blue-400 p-1 fixed left-0 bottom-0 flex items-center justify-between px-2 quini:hidden
   }
   .addTiktokInput {
     @apply w-14 h-14 cursor-pointer py-4 flex items-center
@@ -48,6 +48,9 @@
   }
   .toggleAddCommentFalse {
     @apply w-full min-h-[100px] bg-pink-400 absolute top-36 flex flex-col justify-center items-center transition-transform duration-500 transform translate-x-full
+  }
+  .navbarTopModal {
+    @apply min-h-[60px] min-w-[120px] border border-gray-300 rounded-xl overflow-hidden shadow-sm shadow-gray-400  fixed right-2 bg-white
   }
 }
 

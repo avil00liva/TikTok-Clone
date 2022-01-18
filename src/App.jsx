@@ -10,6 +10,9 @@ import { getDownloadURL, ref, uploadBytesResumable, uploadString } from 'firebas
 import {  db,storage } from './firebase'
 import { addDoc, collection, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, getDocs } from "firebase/firestore"
 import photoDefault from "./assets/10.png"
+import NavBarTop from './components/NavBarTop'
+import SidebarLeft from './components/SidebarLeft'
+import ContentFeed from './components/ContentFeed'
 
 
 /************************************************************/
@@ -68,6 +71,10 @@ const TIKTOKS = [
   },
 ]
 
+const mql = window.matchMedia('(max-width: 498px)')
+
+const mobileView = mql.matches
+
 function App() {
 
   const [luz, setLuz] = useState(false)
@@ -79,28 +86,30 @@ function App() {
   const encender = ()=> {
     setLuz(!luz)
   }
-
   {/*useEffect(()=>{
     const getPost = async ()=> {
-        const data = await getDocs(collection(db, "posts"))
-        setPosts(data.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
+      const data = await getDocs(collection(db, "posts"))
+      setPosts(data.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
     }
     getPost()
-
+    
   }, [])*/}
   useEffect( ()=>{
     const getPost = async ()=> { onSnapshot(
-       query(collection(db, "posts"), orderBy("timestamp", "desc")),
+      query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshot)=>{
         setPosts(snapshot.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
       }
-    )}
-    getPost()
-  }, [db])
+      )}
+      getPost()
+    }, [db])
+    
 
   return (
       <div className="w-full min-h-screen">
-        <div className='w-full min-h-screen block bg-gray-900'>
+        {mobileView === true ?
+        <>
+          <div className='w-full min-h-screen block bg-gray-900'>
             {posts.map((tiktok)=>{
               return (
                 <div className='snap-start overflow-hidden' key={tiktok.id}>
@@ -109,10 +118,35 @@ function App() {
               )
             })}
           </div>
-        <AddVideo addTik={addTik} />
-        <NavbarBottom  addTik={addTik} newTiktok={newTiktok}  />
+
+
+          <AddVideo addTik={addTik} />
+          <NavbarBottom  addTik={addTik} newTiktok={newTiktok} />
+        </>
+        
+        :
+        
+        <>
+          <NavBarTop />
+          <div className='hidden mt-[60px] w-full quini:flex min-h-screen'>
+            <SidebarLeft />
+            <div className='w-full min-h-screen flex flex-col laptop:items-center'>
+              {posts.map((tiktokWeb)=>{
+                return (
+                  <>
+                    <ContentFeed {...tiktokWeb}/>
+                  </>
+                )
+              })}
+            </div>
+          </div>
+        </>
+        }
+
+
       </div>
   )
 }
 
 export default App
+
