@@ -13,6 +13,8 @@ import photoDefault from "./assets/10.png"
 import NavBarTop from './components/NavBarTop'
 import SidebarLeft from './components/SidebarLeft'
 import ContentFeed from './components/ContentFeed'
+import { signOut } from 'firebase/auth'
+import { auth } from './firebase'
 
 
 /************************************************************/
@@ -76,7 +78,7 @@ const mql = window.matchMedia('(max-width: 498px)')
 const mobileView = mql.matches
 
 function App() {
-
+  const [isAuth, setIsAuth] = useState(localStorage.getItem("isAuth"));
   const [luz, setLuz] = useState(false)
   const [addTik, setAddTik] = useState(false)
   const [posts, setPosts]=useState([])
@@ -113,7 +115,7 @@ function App() {
             {posts.map((tiktok)=>{
               return (
                 <div className='snap-start overflow-hidden' key={tiktok.id}>
-                  <VideoPlayer {...tiktok} />
+                  <VideoPlayer {...tiktok} isAuth={isAuth} setIsAuth={setIsAuth} />
                 </div>
               )
             })}
@@ -121,13 +123,13 @@ function App() {
 
 
           <AddVideo addTik={addTik} />
-          <NavbarBottom  addTik={addTik} newTiktok={newTiktok} />
+          <NavbarBottom  addTik={addTik} newTiktok={newTiktok} isAuth={isAuth} setIsAuth={setIsAuth} />
         </>
         
         :
         
         <>
-          <NavBarTop />
+          <NavBarTop isAuth={isAuth} setIsAuth={setIsAuth}/>
           <div className='hidden mt-[60px] w-full quini:flex min-h-screen'>
             <SidebarLeft />
             <div className='w-full min-h-screen flex flex-col laptop:items-center'>

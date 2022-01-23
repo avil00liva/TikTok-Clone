@@ -6,6 +6,7 @@ import { FaPlay,FaCommentDots, FaPause } from "react-icons/fa"
 import { AiFillHeart } from "react-icons/ai"
 import { RiShareForwardFill } from "react-icons/ri"
 import AtomModal from './atomModal'
+import diskDefault from "../assets/default-disk.png"
 
 
 const ContentFeed = ({id, timestamp, src, image, song, description, userImg, username, comments, shares}) => {
@@ -33,7 +34,7 @@ const ContentFeed = ({id, timestamp, src, image, song, description, userImg, use
             <div className='w-full max-w-[592px] flex flex-row items-start py-5 relative after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:transform after:scale-y-50 after:bg-[rgba(22,24,35,0.2)]'>
                 <a href="#" className='flex-[0 0 auto]'>
                     <div className='w-[56px] h-[56px] relative bg-[rgba(136,136,136,0.5)] rounded-full overflow-hidden'>
-                        <img src={avatarUser} alt="Avatar de usuario" className='w-full h-full cursor-pointer object-cover'/>
+                        <img src={userImg ? userImg  : avatarUser} alt="Avatar de usuario" className='w-full h-full cursor-pointer object-cover'/>
                     </div>
                 </a>
                 <div className='ml-3 w-full'>
@@ -58,10 +59,11 @@ const ContentFeed = ({id, timestamp, src, image, song, description, userImg, use
                             <a href="#" className='font-bold text-gray-900 hover:border-b hover:border-b-gray-900 mx-1'></a>
                             <span></span>
                         </div>
-                        <h4 className='quini:max-w-[250px] laptop:w-full text-ellipsis laptop:overflow-visible overflow-hidden whitespace-nowrap w-full block font-semibold leading-[22px] mt-1 mb-3'>
+                        <h4 className='quini:max-w-[250px] laptop:w-full text-ellipsis laptop:overflow-visible overflow-hidden whitespace-nowrap w-full font-semibold leading-[22px] mt-1 mb-3 flex items-center gap-1'>
                             <a href="#" className='font-bold hover:border-b hover:border-b-gray-900'>
                                 {song}
                             </a>
+                            <img src={diskDefault} alt="picture" className='w-[20px] h-[20px] rounded-full animate-spin' />
                         </h4>
                     </div>
                     <div className='flex items-end flex-row'>

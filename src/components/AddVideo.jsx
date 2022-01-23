@@ -6,7 +6,7 @@ import { MdSend } from "react-icons/md"
 /************************************************************/
 
 import { getDownloadURL, ref, uploadBytesResumable, uploadString } from 'firebase/storage'
-import {  db,storage } from '../firebase'
+import {  db,storage,auth } from '../firebase'
 import { addDoc, collection, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, getDocs } from "firebase/firestore"
 import photoDefault from "../assets/10.png"
 
@@ -20,9 +20,10 @@ const AddVideo = ({ addTik }) => {
     const [description, setDescription]=useState("")
     const [selectedFile, setSelectedFile]=useState(null)
     const [userImg, setUserImg] = useState(photoDefault)
-    const [song, setSong]=useState(`original sound - Unknow🔥`)
+    const [song, setSong]=useState(`original sound - Unknow`)
     const [loading, setLoading]= useState(false)
-
+    console.log(auth);
+//.split(" ").join("").toLocaleLowerCase()
 
     const sendPost = async (e)=>{
         e.preventDefault()
@@ -33,6 +34,36 @@ const AddVideo = ({ addTik }) => {
         const docRef = await addDoc(collection(db, "posts"), {
             username: input,
             userImg: userImg,
+            description: description,
+            song: song,
+            timestamp: serverTimestamp()
+        })
+        const imageRef = ref(storage, `posts/${docRef.id}/video`)
+        if (selectedFile){
+            await uploadString(imageRef, selectedFile,"data_url").then(async ()=>{
+                const downloadUrl= await getDownloadURL(imageRef)
+                await updateDoc(doc(db, "posts", docRef.id), {
+                    src: downloadUrl,
+                })
+            })
+        }
+        setLoading(false)
+        setInput("")
+        setDescription("")
+        setSong(`original sound - ${input}`)
+        setSelectedFile(null)
+
+    }
+    const sendAuthPost = async (e)=>{
+        e.preventDefault()
+
+        if (loading) return
+        setLoading(true)
+
+        const docRef = await addDoc(collection(db, "posts"), {
+            id: auth.currentUser.uid,
+            username: auth.currentUser.displayName.split(" ").join("").toLocaleLowerCase(),
+            userImg: auth.currentUser.photoURL,
             description: description,
             song: song,
             timestamp: serverTimestamp()
@@ -91,7 +122,7 @@ const AddVideo = ({ addTik }) => {
                             <AiOutlineVideoCameraAdd className='text-5xl text-pink-500' />
                             <input type="file" hidden onChange={addImageToPost} ref={filePickerRef} />
                         </div>
-                        <button type='submit' className='flex px-5 py-2 bg-pink-500 transition-colors hover:bg-pink-700 items-center gap-2 text-xl text-white rounded-lg cursor-pointer' onClick={sendPost}>Cargar <MdSend className='self-end'/> </button>
+                        <button type='submit' className='flex px-5 py-2 bg-pink-500 transition-colors hover:bg-pink-700 items-center gap-2 text-xl text-white rounded-lg cursor-pointer' onClick={sendAuthPost}>Cargar <MdSend className='self-end'/> </button>
                     </div>
                 </form>
             </div>
