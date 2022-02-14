@@ -3,19 +3,21 @@ import avatarDefault from "../assets/10.png"
 import diskDefault from "../assets/default-disk.png"
 import { HiMusicNote } from "react-icons/hi"
 import { FaPlay } from "react-icons/fa"
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai"
+import { AiFillHeart } from "react-icons/ai"
 import { FaCommentDots, FaUserCheck } from "react-icons/fa"
 import { RiShareForwardFill } from "react-icons/ri"
 import { BsThreeDots, BsFillTrashFill } from "react-icons/bs"
 import { BiLogIn } from "react-icons/bi"
 import { db } from '../firebase'
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import Comment from './Comment'
 import { auth, provider } from "../firebase"
 import { signInWithPopup, signOut } from "firebase/auth"
+import { Link } from 'react-router-dom'
+import LoginModal from "./LoginModal"
 
 
-const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, description, userImg, username, comments, shares}) => {
+const VideoPlayer = ({isAuth,setIsAuth, iduser, id, timestamp, src, image, song, description, userImg, username, comments, shares}) => {
     const [menuTiktok, setMenuTiktok] = useState(false)
     const [showComments, setShowComments] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
@@ -23,6 +25,7 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
     const [liked, setLiked] = useState(false)
     const [Statecomments, setStateComments]=useState([])
     const [commented, setCommented]=useState("")
+    const [openLog, setOpenLog]=useState(false)
     const video=useRef()
 
     //!user?.photoURL ? photoDefault : user?.photoURL
@@ -45,6 +48,10 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
         setIsPlaying(!isPlaying)
     }
 
+    const handleLog=()=>{
+        setOpenLog(true)
+    }
+
     useEffect(
         () =>
           onSnapshot(
@@ -58,12 +65,12 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
       );
 
     useEffect(()=>{
-        setCommented(Statecomments.findIndex((comment)=> comment.id === id) !== -1)
+        setCommented(Statecomments.findIndex((comment)=> comment.id === auth?.currentUser?.uid) !== -1)
     },[Statecomments])
 
     const deleteComments = async ()=> {
         if(Statecomments){
-            await deleteDoc(doc(db, "posts", id, "comments", id))
+            await deleteDoc(doc(db, "posts", id, "comments", auth?.currentUser?.uid))
         }
     }
   
@@ -76,16 +83,24 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
       );
 
     useEffect(()=>{
-        setLiked(likesDoc.findIndex((like)=> like.id === id) !== -1)
+        setLiked(likesDoc.findIndex((like)=> like.id === auth?.currentUser?.uid) !== -1)
     },[likesDoc])
 
     const likePost = async ()=> {
-        if(liked){
-            await deleteDoc(doc(db, "posts",id,"likes", id))
-        } else {
-            await setDoc(doc(db, "posts",id,"likes", id), {
-                username: id + timestamp,
-            })
+        if(isAuth){
+            if(liked){
+                await deleteDoc(doc(db, "posts",id,"likes", auth.currentUser.uid))
+            } else {
+                await setDoc(doc(db, "posts",id,"likes", auth.currentUser.uid), {
+                    username: auth.currentUser.displayName.split(" ").join("").toLocaleLowerCase(),
+                    iduser: auth.currentUser.uid,
+                    postId: iduser,
+                    userImg: auth.currentUser.photoURL,
+                    timestamp: serverTimestamp()
+                })
+            }}
+        else {
+            return signInWithGoogle()
         }
     }
     const signInWithGoogle = () => {
@@ -115,14 +130,16 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
             <ul className='absolute text-xl flex flex-col items-center
             py-8 top-[5%] right-0 mr-1 gap-2'>
                 <div className='w-[50px] h-[50px] rounded-full border-1 border-pink-600 overflow-hidden mb-1'>
-                    <img src={userImg ? userImg  : avatarDefault } alt="User avatar" />
+                    <Link to={"/profile/" + iduser}>
+                        <img src={userImg ? userImg  : avatarDefault } alt="User avatar" />
+                    </Link>
                 </div>
                 <li className='flex flex-col items-center justify-between text-xl text-gray-200 font-bold' onClick={(e) => {
                     e.stopPropagation();
                     likePost();
                     }}>
                     <strong className='mt-2 text-2xl cursor-pointer text-gray-200 transition-colors duration-200 hover:text-gray-400'>
-                        <AiFillHeart className={liked ? "text-pink-400" : "text-4xl cursor-pointer text-gray-200 transition-colors duration-200 hover:text-gray-400" } />
+                        <AiFillHeart className={liked ? "text-pink-400" : "cursor-pointer text-gray-200 transition-colors duration-200 hover:text-gray-400" } />
                     </strong> 
                     {likesDoc.length > 0 && ( <span
                         className={`group-hover:text-pink-600 text-xl ${
@@ -170,10 +187,10 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
                         deleteDoc(doc(db, "posts", id))
                         setReLoad({})
                     }}>
-                        Delete video <BsFillTrashFill className='ml-2 text-red-500' />
+                        Borrar video <BsFillTrashFill className='ml-2 text-red-500' />
                     </p>
                     {!isAuth ? (
-                        <p className='bg-gray-400 text-lg rounded-full text-white cursor-pointer flex items-center justify-center' onClick={signInWithGoogle}>
+                        <p className='bg-gray-400 text-lg rounded-full text-white cursor-pointer flex items-center justify-center' onClick={handleLog}>
                             Iniciar sesión <FaUserCheck className='ml-2 text-pink-500' />
                         </p>) : (
                         
@@ -184,7 +201,8 @@ const VideoPlayer = ({isAuth,setIsAuth,id, timestamp, src, image, song, descript
 
                 </div> 
             </div>
-            <Comment showComments={showComments} deleteComments={deleteComments} comments={Statecomments} mostrarComment={mostrarComment} id={id} />          
+            <Comment showComments={showComments} deleteComments={deleteComments} comments={Statecomments} mostrarComment={mostrarComment} id={id} iduser={iduser} />          
+            <LoginModal openLog={openLog} setOpenLog={setOpenLog}/>
         </div>
     )
 }

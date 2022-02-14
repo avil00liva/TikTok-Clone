@@ -1,10 +1,25 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import Comment from './Comment'
 import avatarDefault from "../assets/10.png"
 import { FaRegHeart } from "react-icons/fa"
+import { auth, db } from '../firebase'
+import { collection, deleteDoc, onSnapshot, orderBy, query, serverTimestamp } from 'firebase/firestore'
 
-const AtomModal = ({isOpen, setIsOpen}) => {
+const AtomModal = ({isOpen, setIsOpen, id, Statecomments}) => {
+    const [content, setContent] = useState("")
+
+    const sendComment = async (e) => {
+        e.preventDefault();
+    
+        await addDoc(collection(db, "posts", id, "comments"), {
+          comment: content,
+          username: auth.currentUser.displayName.split(" ").join("").toLocaleLowerCase(),
+          timestamp: serverTimestamp(),
+        });
+    
+        setContent("");
+      };
 
     return (
         <>
@@ -70,6 +85,43 @@ const AtomModal = ({isOpen, setIsOpen}) => {
                                             <span className='text-xs leading-[17px]'>94</span>
                                         </div>
                                     </div>
+                                    {Statecomments.map((comment,index)=>{
+                                        return (
+                                            <div className='flex flex-row items-start mb-4 relative w-full min-h-[60px] p-4' key={index}>
+                                                <a href="#" className='flex-[0 0 40px] mr-3'>
+                                                    <span className='w-10 h-10 inline-block m-0 p-0 relative overflow-hidden whitespace-nowrap rounded-full text-center leading-8 bg-[rgba(136,136,136,0.5)]'>
+                                                        <img src={avatarDefault} alt="Avatar default" className='w-full h-full object-cover'/>
+                                                    </span>
+                                                </a>
+                                                <div className='flex-[1]'>
+                                                    <a href="#" className='font-bold text-lg leading-[25px]'>
+                                                        <span>{comment.username}</span>
+                                                        .
+                                                        <span className='text-base text-[rgb(254,44,85)]'>Creador</span>
+                                                    </a>
+                                                    <p className='text-base leading-[22px] whitespace-pre-line break-words mb-[6px]'>
+                                                        <span>{comment.comment}</span>
+                                                    </p>
+                                                    <p className='text-[rgba(22,24,35,0.5)] text-sm leading-5'>
+                                                        <span>2021-10-29</span>
+                                                        <span className='ml-6 cursor-pointer'>Responder</span>
+                                                    </p>
+                                                    <div className=''>
+                                                        <div className='flex flex-row justify-between relative'>
+                                                            <p className='text-[rgba(22,24,35,0.5)] font-semibold text-sm leading-5 cursor-pointer'>Ver más respuestas (2)
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className='text-[rgba(22,24,35,0.5)] text-xs leading-[17px] w-5 flex flex-col items-center cursor-pointer self-center'>
+                                                    <div>
+                                                        <FaRegHeart className='w-5 h-5 fill-current' />  
+                                                    </div>
+                                                    <span className='text-xs leading-[17px]'>94</span>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                                 <div className='w-full h-[50px] bg-[#eee] relative p-4 flex items-center '>
                                     <input type="text" className='w-full h-[30px] rounded-lg border-4 border-gray-700 outline-none px-2 text-sm' />

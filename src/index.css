@@ -77,6 +77,90 @@ code {
     monospace;
 }
 
+.loading {
+  width: 80px;
+  height: 40px;
+  position: relative;
+}
+.loading::before,
+.loading::after {
+  position: absolute;
+  content: '';
+  top: 6px;
+  background-color: #ff3e9e;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  /*mix-blend-mode: multiply;*/
+  animation: tiktok 1s linear infinite;
+} 
+
+.loading::after {
+  background-color: #4de8f4;
+  animation-delay: 1s;
+}
+
+@keyframes tiktok {
+  0%, 100% {
+    top: 6px;
+    left: 0px;
+    width: 28px;
+    height: 28px;
+    z-index: 0;
+    transform: scale(1);
+  }
+  25% {
+    top: 0px;
+    height: 40px;
+    width: 40px;
+    z-index: 1;
+    left: 20px;
+    transform: scale(1);
+  }
+  50% {
+    top: 6px;
+    width: 28px;
+    height: 28px;
+    left: 48px;
+  }
+  75% {
+    top: 8px;
+    width: 24px;
+    height: 24px;
+    left: 26px;
+    transform: scale(1);
+  }
+}
+
+.break {
+  word-break: break-all;
+}
+
+.flexauto {
+  flex: 0 0 auto;
+}
+
+.flexauto1 {
+  flex: 1 1 auto;
+}
+
+.comentarios {
+  overflow: hidden auto;
+}
+
+.flexcustomcomment {
+  flex: 0 0 32px;
+}
+
+.flexbtn {
+  flex: 0 0 48px;
+}
+
+.overflowinput {
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

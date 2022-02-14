@@ -9,6 +9,7 @@ import { getDownloadURL, ref, uploadBytesResumable, uploadString } from 'firebas
 import {  db,storage,auth } from '../firebase'
 import { addDoc, collection, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, getDocs } from "firebase/firestore"
 import photoDefault from "../assets/10.png"
+import { usePosts } from '../context/PostsFBContext'
 
 
 /************************************************************/
@@ -22,10 +23,9 @@ const AddVideo = ({ addTik }) => {
     const [userImg, setUserImg] = useState(photoDefault)
     const [song, setSong]=useState(`original sound - Unknow`)
     const [loading, setLoading]= useState(false)
-    console.log(auth);
-//.split(" ").join("").toLocaleLowerCase()
+    const {usuario} = usePosts()
 
-    const sendPost = async (e)=>{
+    /*const sendPost = async (e)=>{
         e.preventDefault()
 
         if (loading) return
@@ -53,7 +53,9 @@ const AddVideo = ({ addTik }) => {
         setSong(`original sound - ${input}`)
         setSelectedFile(null)
 
-    }
+    }*/
+
+
     const sendAuthPost = async (e)=>{
         e.preventDefault()
 
@@ -61,7 +63,8 @@ const AddVideo = ({ addTik }) => {
         setLoading(true)
 
         const docRef = await addDoc(collection(db, "posts"), {
-            id: auth.currentUser.uid,
+            idDocUser: usuario[0]?.id,
+            iduser: auth.currentUser.uid,
             username: auth.currentUser.displayName.split(" ").join("").toLocaleLowerCase(),
             userImg: auth.currentUser.photoURL,
             description: description,
