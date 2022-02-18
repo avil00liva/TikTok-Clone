@@ -37,7 +37,7 @@ export function PostsFBContextProvider({children}) {
 
       useEffect(()=>{
         const usuarioEmailPass = async ()=> { onSnapshot(
-          query(collection(db, "usuarios"), where("iduser", "==", usuarioOn)),
+          query(collection(db, "usuarios"), where("iduser", "==", !usuarioOn ? "" : usuarioOn)),
           (snapshot)=>{
             setUsuario(snapshot.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
           }

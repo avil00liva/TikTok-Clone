@@ -16,6 +16,7 @@ import EditProfileModal from './EditProfileModal';
 import ProfileLogin from './ProfileLogin';
 import TiktokLoading from './TiktokLoading';
 import { usePosts } from '../context/PostsFBContext';
+import Notifications from './Notifications';
 
 const Profile = () => {
   const userid = useParams()
@@ -282,7 +283,6 @@ const Profile = () => {
         : 
         <ProfileLogin setIsAuth={setIsAuth} isAuth={isAuth} />
       }
-
     </>
     );
 };

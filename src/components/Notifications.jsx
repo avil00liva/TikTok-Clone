@@ -18,49 +18,45 @@ const Notifications = ({notifications, setNotifications, isAuth, posts}) => {
   const today = new Date()
   const hora = today.getHours() + ":" + today.getMinutes();
 
-  const handleLog=()=>{
-    setOpenLog(true)
-  }
-
   useEffect(()=>{
     const postFiltrado = posts.filter(post => post?.iduser === userID)
     setPostsFiltrados(postFiltrado)
-  },[posts])
+  },[db, auth, posts])
 
   useEffect(()=>{
     const commentsDb = async ()=> { onSnapshot(
-      query(collectionGroup(db, "comments"), where("postId", "==", userID)),
+      query(collectionGroup(db, "comments"), where("postId", "==", !userID ? "" : userID)),
       (snapshot)=>{
         setComments(snapshot.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
       }
     )}
     commentsDb()
-  },[db, auth])
+  },[db, auth, posts])
 
   useEffect(()=>{
     const likesDb = async ()=> { onSnapshot(
-      query(collectionGroup(db, "likes"), where("postId", "==", userID)),
+      query(collectionGroup(db, "likes"), where("postId", "==", !userID ? "" : userID)),
       (snapshot)=>{
         setLikesDoc(snapshot.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
       }
     )}
     likesDb()
-  },[db, auth])
+  },[db, auth, posts])
   useEffect(
     () =>{ 
-     const usersDb = async ()=> {onSnapshot(query(collection(db, "usuarios", userID, "followers")), 
+     const usersDb = async ()=> {onSnapshot(query(collection(db, "usuarios", !userID ? "0" : userID, "followers")), 
      (snapshot) =>{
        setFollowUser(snapshot.docs.map((doc)=> ({ ...doc.data(), id: doc.id})))
       }
       )}
       usersDb()
     },
-    [db, auth]
+    [db, auth, posts]
   );
 
   return (
     <>
-    {isAuth 
+    {isAuth
       ? 
       <div className={notifications ? 'w-full min-h-screen bg-gray-900 inset-0 z-[180] overflow-y-auto text-white flex items-center flex-col fixed' : 'hidden'}>
         <nav className='min-h-[30px] w-full flex mb-4 items-center justify-between p-2 py-3 fixed top-0 left-0 bg-gray-900 z-[21]'>

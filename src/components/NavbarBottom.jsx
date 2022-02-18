@@ -13,7 +13,7 @@ import LoginModal from './LoginModal'
 
 const NavbarBottom = ({ addTik, newTiktok, isAuth, setIsAuth, notifications, displayNotifications }) => {
     const [openLog, setOpenLog]=useState(false)
-
+    const estadoSesion = localStorage.getItem("isAuth")
 
     const signInWithGoogle = () => {
         signInWithPopup(auth, provider).then((result) => {

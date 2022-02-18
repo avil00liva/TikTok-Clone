@@ -36,9 +36,9 @@ const Comment = ({mostrarComment, showComments, id, comments, deleteComments, id
         <div className={showComments ? 'addComment' : 'addCommentFalse'} >
             <h1 className='p-4 text-xl mb-2 text-gray-200 flex justify-between items-center'>Comments ✍🏼 <AiFillCloseCircle className='text-pink-500 cursor-pointer mr-3 text-3xl' onClick={mostrarComment} /> </h1>
             <div className='bg-gray-900 w-full h-[400px] overflow-auto p-2'>
-            {comments.map((comment)=>{
+            {comments.map((comment, index)=>{
                 return (
-                    <div className='toggleComment'>
+                    <div className='toggleComment' key={index}>
                         <h3 className='text-pink-500'>@{comment.username}</h3>
                         <p className='text-gray-200'>{comment.comment}</p>
                         <AiFillDelete className='text-red-600 text-2xl m-2 cursor-pointer self-end'/>

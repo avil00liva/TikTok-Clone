@@ -26,6 +26,7 @@ const ContentFeed = ({isAuth, setIsAuth, id, iduser, timestamp, src, image, song
     const [isFollowed, setIsFollowed] = useState(false)
     const [followUser, setFollowUser] = useState([])
 
+
     const handleModal=()=>{
         setIsOpen(!isOpen)
     }
